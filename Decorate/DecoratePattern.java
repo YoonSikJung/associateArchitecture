@@ -30,13 +30,14 @@ class Coffe extends Beverage {
  * decorate의 핵심 부분
  * decorate의 base class에서 바로 위의 Beverage class를 component로 가지고 있어서 이를 생성자일 때 안쪽에 넣을 오브젝트를 저장해놓는다.
  */
-
 abstract class CandimentDecorate extends Beverage {
     Beverage beverage;
     public abstract String getDescription(); //Beverage에서는 일반 함수로 정의 했지만, 상속을 받을 때 다시 abstract으로 바꾸었다. 반드시 구현하게 하도록
 }
 
-
+/*
+ * decorate로 구현한 부분 생성자에서 this.beverage = beverage; 이부분을 통해 decorate를 계속 이어 갈 수 있다.
+ */
 class Sugar extends CandimentDecorate {
     public Sugar(Beverage beverage) {
         this.beverage = beverage;
