@@ -1,8 +1,52 @@
 import java.util.ArrayList;
 
 
+interface Iterator {
+    boolean hasNext();
+    Object next();
+}
 
+class DinerMenuIterator implements Iterator {
+    MenuItem[] items;
+    int position;
 
+    public DinerMenuIterator(MenuItem[] items)
+    {
+        this.items = items;
+    }
+    public Object next() {
+        MenuItem menuItem = items[position];
+        position++;
+        return menuItem;
+    }
+    public boolean hasNext() {
+        if(position >= items.length || items[position]== null){
+            return false;
+        }
+        return true;
+    }
+}
+
+class PancakeHouseIterator implements Iterator {
+    ArrayList items;
+    int position;
+
+    public PancakeHouseIterator(ArrayList items)
+    {
+        this.items = items;
+    }
+    public Object next() {
+        Object menuItem = items.get(position);
+        position++;
+        return menuItem;
+    }
+    public boolean hasNext() {
+        if(position >= items.size() || items.get(position) == null){
+            return false;
+        }
+        return true;
+    }
+}
 
 // ******************************************************************************************* //
 // 메뉴 아이템에 관한 공통 클래스
@@ -47,8 +91,13 @@ class PancakeHouseMenu {
         MenuItem menuItem = new MenuItem(name, description, vegetarian, price);
         menuItems.add(menuItem);
     }
-    public ArrayList getMenuItems() {
-        return menuItems;
+    // public ArrayList getMenuItems() {
+    //     return menuItems;
+    // }
+
+    public Iterator createIterator() {
+        return new PancakeHouseIterator(menuItems);
+        
     }
 }
 // ******************************************************************************************* //
@@ -60,6 +109,7 @@ class DinerMenu {
 
     public DinerMenu() {
         menuItems = new MenuItem[MAX_ITEMS];
+
 
         addItem("체식주의자용!", "오로지 샐러드만!", true, 3.99);
         addItem("고기 폭탄 식단", "넘나 맛있는거!", false, 1.99);
@@ -73,10 +123,47 @@ class DinerMenu {
             menuItems[numOfItems++] = menuItem;            
         }
     }
-    public MenuItem[] getMenuItems() {
-        return menuItems;
+
+    public Iterator createIterator() {
+        return new DinerMenuIterator(menuItems);
+        
+    }
+    // public MenuItem[] getMenuItems() {
+    //     return menuItems;
+    // }
+}
+
+// ******************************************************************************************* //
+
+
+class Waitress {
+    PancakeHouseMenu pancakeHouseMenu;
+    DinerMenu dinerMenu;
+
+    public Waitress(PancakeHouseMenu pancakeHouseMenu, DinerMenu dinerMenu) {
+        this.pancakeHouseMenu = pancakeHouseMenu;
+        this.dinerMenu = dinerMenu;     
+    }
+    public void printMenu() {
+        Iterator pancakeIterator = pancakeHouseMenu.createIterator();
+        Iterator dinerIterator = dinerMenu.createIterator();
+        System.out.println("아침메뉴");
+        printMenu(pancakeIterator);
+        System.out.println("저녁메뉴");
+        printMenu(dinerIterator);
+    }
+
+    private void printMenu(Iterator iterator)
+    {
+        while( iterator.hasNext() ) {
+            MenuItem menuItem = (MenuItem)iterator.next();
+            System.out.print(menuItem.getName() + " ");
+            System.out.print(menuItem.getPrice() + " ");
+            System.out.println(menuItem.getDescription() + " ");
+        }
     }
 }
+
 // ******************************************************************************************* //
 // ******************************************************************************************* //
 // ******************************************************************************************* //
@@ -84,6 +171,10 @@ class DinerMenu {
 public class IteratorPattern {
     
     public static void main(String[] args) {
-       
+       PancakeHouseMenu pancakeHouseMenu = new PancakeHouseMenu();
+       DinerMenu dinerMenu = new DinerMenu();
+
+       Waitress waitress = new Waitress(pancakeHouseMenu, dinerMenu);
+       waitress.printMenu();
     }
 }
