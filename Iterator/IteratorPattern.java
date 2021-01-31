@@ -1,11 +1,20 @@
 import java.util.ArrayList;
 
 
+/*
+ * SRS 원칙을 적용 시킨 결과이다.
+ * 보관하는 것과 꺼내는 것의 책임을 나누었다.
+ * 이를 활용하여 high cohesion을 도달할 수있다. 
+ */
+// ******************************************************************************************* //
+//diner와 pancake 집의 메뉴 리스트를 공통의 방식으로 접근하기 위해 
+//iterator라는 인터페이스를 선언
 interface Iterator {
     boolean hasNext();
     Object next();
 }
 
+//선언한 인터페이를 가지고 diner class를 위한 iterator institute
 class DinerMenuIterator implements Iterator {
     MenuItem[] items;
     int position;
@@ -27,6 +36,7 @@ class DinerMenuIterator implements Iterator {
     }
 }
 
+//선언한 인터페이를 가지고 Pancake class를 위한 iterator institute
 class PancakeHouseIterator implements Iterator {
     ArrayList items;
     int position;
@@ -95,6 +105,8 @@ class PancakeHouseMenu {
     //     return menuItems;
     // }
 
+    //위에서 구현한 pancake iterator 구초제를 하나 만들어서 사용자에게 리턴시켜준다.
+    //그래서 클래스의 관계는 composite 관계로 볼 수 있다.
     public Iterator createIterator() {
         return new PancakeHouseIterator(menuItems);
         
@@ -124,6 +136,8 @@ class DinerMenu {
         }
     }
 
+    //위에서 구현한 diner iterator 구초제를 하나 만들어서 사용자에게 리턴시켜준다.
+    //그래서 클래스의 관계는 composite 관계로 볼 수 있다.
     public Iterator createIterator() {
         return new DinerMenuIterator(menuItems);
         
