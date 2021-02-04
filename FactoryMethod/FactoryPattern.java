@@ -1,20 +1,69 @@
 import java.util.ArrayList;
 
+
+interface Dough {
+    public String name = "";    
+}
+
+class ThinCrustDough implements Dough {
+    public String name = "Thin Crust Dough";    
+}
+
+interface Sauce {
+    public String name = "";    
+}
+
+class MarinaraSauce implements Sauce {
+    public String name = "Thin MarinaraSauce";    
+}
+
+interface Chesse {
+    public String name = "";    
+}
+
+class RegginaoCheese implements Chesse {
+    public String name = "Thin RegginaoCheese";    
+}
+
+
+
+/////************************************************
+/// add for abstact factory
+interface PizzaIngredientFactory {
+    public Dough createDough();
+    public Sauce createSauce();
+    public Chesse createCheese();
+}
+
+class NYPizaaIngredientFactory implements PizzaIngredientFactory {
+    public Dough createDough() {
+        return new ThinCrustDough();
+    }
+    public Sauce createSauce() {
+        return new MarinaraSauce();
+    }
+    public Chesse createCheese() {
+        return new RegginaoCheese();
+    }
+}
+
 abstract class Pizza {
     String name;
-    String dough;
-    String sauce;
+    Dough dough;
+    Sauce sauce;
+    Chesse chesse;
     ArrayList toppings = new ArrayList();
 
-    void prepare() {
-        System.out.println("Preparing " + name);
-        System.out.println("Tossing dought...");
-        System.out.println("Adding sauce..");
-        System.out.println("Adding toppings: ");
-        for ( int i =0 ;i < toppings.size() ; i++ ) {
-            System.out.println(" " + toppings.get(i));
-        }
-    }
+    // void prepare() {
+    //     System.out.println("Preparing " + name);
+    //     System.out.println("Tossing dought...");
+    //     System.out.println("Adding sauce..");
+    //     System.out.println("Adding toppings: ");
+    //     for ( int i =0 ;i < toppings.size() ; i++ ) {
+    //         System.out.println(" " + toppings.get(i));
+    //     }
+    // }
+    abstract void prepare();
     void bake() {
         System.out.println("");
     }
@@ -26,6 +75,9 @@ abstract class Pizza {
     }
     String getName(){
         return name;
+    }
+    void setName(String name){
+        this.name = name;
     }
 }
 
@@ -66,12 +118,22 @@ abstract class PizzaStore{
 //****** 실제 피자 가계 만드는 곳****** //
 class NYPizzaStore extends PizzaStore {
     Pizza createPizza(String type) {
+        
+        Pizza pizza = null;
+        PizzaIngredientFactory ingredientFactory = new NYPizaaIngredientFactory();
+        //각 지역마다 달라지는 ingredient
+
         if( type.equals("cheese")) {
-            return new NYSyleCheesePizza();
+            pizza = new CheesePizza(ingredientFactory);
+            pizza.setName("뉴욕 치즈 피자야");
         } else if( type.equals("veggie")) {
-            return new NYSyleVeggiePizza();
+            pizza = new ClamPizza(ingredientFactory);
+            pizza.setName("뉴욕 Clam 피자야");
         } else return null;
+
+        return pizza;
     }
+
 }
 // Pizza stores는 pizza를 생성하기 위해 factory method를 이용해서
 // createPizza로 생성을 위임했다.
@@ -79,21 +141,33 @@ class NYPizzaStore extends PizzaStore {
 // 즉, 고수준 구성요소인 pizzaStore와 저수준 구성요소인 피자 객체들이 모두 추상 클래스인 pizza에 의존하게 된다.(DIP)
 
 
-class NYSyleCheesePizza extends Pizza {
-    public NYSyleCheesePizza() {
-        name = "NY style Chesse Pizza";
-        dough = "Thin Crust Pizza";
-        sauce = "Marinara";
-        toppings.add("Grated Regginao  chgeese");
+class CheesePizza extends Pizza {
+    PizzaIngredientFactory ingredientFactory;
+
+    public CheesePizza(PizzaIngredientFactory ingredientFactory) {
+        this.ingredientFactory = ingredientFactory;
+    }
+
+    public void prepare() {
+        System.out.println("prepareing " + name);
+        dough = ingredientFactory.createDough();
+        sauce = ingredientFactory.createSauce();
+        chesse = ingredientFactory.createCheese();
+
     }   
 }
 
-class NYSyleVeggiePizza extends Pizza {
-    public NYSyleVeggiePizza() {
-        name = "NY style Veggie Pizza";
-        dough = "Very very Thin Crust Pizza";
-        sauce = "good sauce";
-        toppings.add("Kimchi");
+class ClamPizza extends Pizza {
+    PizzaIngredientFactory ingredientFactory;
+
+    public ClamPizza(PizzaIngredientFactory ingredientFactory) {
+        this.ingredientFactory = ingredientFactory;
+    }
+
+    public void prepare() {
+        System.out.println("prepareing " + name);
+        dough = ingredientFactory.createDough();
+        sauce = ingredientFactory.createSauce();
     }   
 }
 
